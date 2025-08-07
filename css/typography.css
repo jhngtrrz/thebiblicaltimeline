@@ -1,0 +1,40 @@
+/* TYPOGRAPHY
+---------------------------------------------------------------------- */
+@font-face {
+	font-family: 'hoeflernew_-swashitalic';
+	src: url('fonts/hoeflernew-italic-swash-webfont.eot');
+	src: url('fonts/hoeflernew-italic-swash-webfont.woff') format('woff'),
+		url('fonts/hoeflernew-italic-swash-webfont.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+
+}
+
+@font-face {
+	font-family: 'hoeflernew_-swashitalic';
+	src: url('fonts/hoeflernew-black-italic-swash-webfont.eot');
+	src: url('fonts/hoeflernew-black-italic-swash-webfont.woff') format('woff'),
+		url('fonts/hoeflernew-black-italic-swash-webfont.ttf') format('truetype');
+	font-weight: bold;
+	font-style: normal;
+
+}
+
+@font-face {
+	font-family: 'interstate_lightcompressedRg';
+	src: url('fonts/interstate-lightcompressed-webfont.eot');
+	src: url('fonts/interstate-lightcompressed-webfont.woff') format('woff'),
+		url('fonts/interstate-lightcompressed-webfont.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'interstate_compressedregular';
+	src: url('fonts/interstate-regularcompressed-webfont.eot');
+	src: url('fonts/interstate-regularcompressed-webfont.woff') format('woff'),
+		url('fonts/interstate-regularcompressed-webfont.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+
+}
