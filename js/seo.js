@@ -1,9 +1,9 @@
 // seo.js - manejo de título y meta descripción
-export function setSEO(title, description){
-  if(title) document.title = title;
-  if(description){
+export function setSEO(title, description) {
+  if (title) document.title = title;
+  if (description) {
     let meta = document.querySelector('meta[name="description"]');
-    if(!meta){
+    if (!meta) {
       meta = document.createElement('meta');
       meta.name = 'description';
       document.head.appendChild(meta);
@@ -13,6 +13,6 @@ export function setSEO(title, description){
 }
 // Mantener compatibilidad con código legacy
 overrideGlobal('setSEO', setSEO);
-function overrideGlobal(name, fn){
-  if(!window[name]) window[name]=fn; else window[name]=fn;
+function overrideGlobal(name, fn) {
+  if (!window[name]) window[name] = fn; else window[name] = fn;
 }

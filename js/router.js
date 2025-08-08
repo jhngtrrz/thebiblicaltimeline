@@ -18,7 +18,7 @@ function addRoute(pattern, handler) {
 	routeTable.push({ regex, keys, handler, pattern });
 }
 
-export function navigate(path, { replace=false } = {}) {
+export function navigate(path, { replace = false } = {}) {
 	const url = path.startsWith('/') ? path : '/' + path;
 	if (replace) {
 		history.replaceState({}, '', url);
@@ -33,7 +33,7 @@ function matchRoute(pathname) {
 		const m = pathname.match(r.regex);
 		if (m) {
 			const params = {};
-			r.keys.forEach((k, i) => params[k] = decodeURIComponent(m[i+1]||''));
+			r.keys.forEach((k, i) => params[k] = decodeURIComponent(m[i + 1] || ''));
 			r.handler(params);
 			return true;
 		}
@@ -42,7 +42,7 @@ function matchRoute(pathname) {
 }
 
 function dispatch() {
-	const path = window.location.pathname.replace(/\/+/g,'/').replace(/\/$/,'');
+	const path = window.location.pathname.replace(/\/+/g, '/').replace(/\/$/, '');
 	if (path === '') {
 		handlers.landing();
 		return;
@@ -104,10 +104,10 @@ const handlers = {
 };
 
 // Definir rutas
-addRoute('home', ()=>handlers.home());
-addRoute('period/:period/:offset', p=>{ handlers.period(p); handlers.offset(p); });
-addRoute('period/:period', p=>handlers.period(p));
-addRoute('event/:slug', p=>handlers.event(p));
+addRoute('home', () => handlers.home());
+addRoute('period/:period/:offset', p => { handlers.period(p); handlers.offset(p); });
+addRoute('period/:period', p => handlers.period(p));
+addRoute('event/:slug', p => handlers.event(p));
 
 // Exponer API similar previa
 export const router = { navigate };

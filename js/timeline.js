@@ -58,14 +58,14 @@ function updateIndicator(left, top) {
             if (centerX >= start && centerX < end) { currentP = (i + 1) + ''; break; }
         }
     }
-        if(currentP){
-            const num = parseInt(currentP,10);
-            if(window.currentPeriod !== num){
-                window.currentPeriod = num;
-                updateFooter(num);
-                if(window.updateSidebar) window.updateSidebar(num);
-            }
+    if (currentP) {
+        const num = parseInt(currentP, 10);
+        if (window.currentPeriod !== num) {
+            window.currentPeriod = num;
+            updateFooter(num);
+            if (window.updateSidebar) window.updateSidebar(num);
         }
+    }
     ind.textContent = currentP ? `Periodo ${currentP}  x:${Math.round(left)} y:${Math.round(top)}` : `x:${Math.round(left)} y:${Math.round(top)}`;
 }
 
@@ -84,7 +84,7 @@ function updateFooter(period) {
     if (active) active.classList.add('active');
 }
 window.updateFooter = updateFooter;
-function updateSidebar(period){
+function updateSidebar(period) {
     const sidebars = document.querySelectorAll('.sidebars > div');
     sidebars.forEach(d => d.style.display = 'none');
     const active = document.querySelector('.sidebars .period-' + period);
@@ -94,41 +94,41 @@ window.updateSidebar = updateSidebar;
 
 // --- Date Bar & Current Year ---
 let yearSegments = null;
-function buildYearSegments(){
+function buildYearSegments() {
     const eventsContainer = document.querySelector('.timeline .events');
-    if(!eventsContainer) return;
+    if (!eventsContainer) return;
     const events = Array.from(eventsContainer.querySelectorAll('.event'));
     const byPeriod = {};
-    events.forEach(ev=>{
-        const p = parseInt(ev.getAttribute('data-period'),10);
-        if(!p) return;
-        if(!byPeriod[p]) byPeriod[p] = [];
-        const left = parseFloat(ev.style.left)||0;
-        const width = parseFloat(ev.style.width)||0;
-        const start = parseInt(ev.getAttribute('data-start'),10);
-        const end = parseInt(ev.getAttribute('data-end'),10);
-        if(!isNaN(start)) byPeriod[p].push({left,width,start,end: isNaN(end)? start:end});
+    events.forEach(ev => {
+        const p = parseInt(ev.getAttribute('data-period'), 10);
+        if (!p) return;
+        if (!byPeriod[p]) byPeriod[p] = [];
+        const left = parseFloat(ev.style.left) || 0;
+        const width = parseFloat(ev.style.width) || 0;
+        const start = parseInt(ev.getAttribute('data-start'), 10);
+        const end = parseInt(ev.getAttribute('data-end'), 10);
+        if (!isNaN(start)) byPeriod[p].push({ left, width, start, end: isNaN(end) ? start : end });
     });
     const segs = [];
-    if(window.period_offsets){
-        for(let i=0;i<window.period_offsets.length;i++){
+    if (window.period_offsets) {
+        for (let i = 0; i < window.period_offsets.length; i++) {
             const startX = window.period_offsets[i][0];
-            const next = window.period_offsets[i+1];
+            const next = window.period_offsets[i + 1];
             let endX = next ? next[0] : startX + 3000; // fallback width
-            const periodIndex = i+1;
-            const list = byPeriod[periodIndex]||[];
-            let minYear = Infinity, maxYear=-Infinity, maxRight = startX;
-            list.forEach(o=>{
-                if(o.start < minYear) minYear = o.start;
-                if(o.end > maxYear) maxYear = o.end;
-                if(o.left + o.width > maxRight) maxRight = o.left + o.width;
+            const periodIndex = i + 1;
+            const list = byPeriod[periodIndex] || [];
+            let minYear = Infinity, maxYear = -Infinity, maxRight = startX;
+            list.forEach(o => {
+                if (o.start < minYear) minYear = o.start;
+                if (o.end > maxYear) maxYear = o.end;
+                if (o.left + o.width > maxRight) maxRight = o.left + o.width;
             });
-            if(maxRight > endX) endX = maxRight + 50;
-            if(minYear === Infinity){ // sin datos usar offset dataset
+            if (maxRight > endX) endX = maxRight + 50;
+            if (minYear === Infinity) { // sin datos usar offset dataset
                 minYear = window.period_offsets[i][2];
                 maxYear = next ? next[2] : minYear + 200;
             }
-            segs.push({startX,endX,startYear:minYear,endYear:maxYear});
+            segs.push({ startX, endX, startYear: minYear, endYear: maxYear });
         }
     }
     yearSegments = segs;
@@ -136,33 +136,33 @@ function buildYearSegments(){
 }
 window.buildYearSegments = buildYearSegments;
 
-function interpolateYear(x){
-    if(!yearSegments || !yearSegments.length) buildYearSegments();
-    const spans = yearSegments||[];
-    for(const s of spans){
-        if(x >= s.startX && x <= s.endX){
+function interpolateYear(x) {
+    if (!yearSegments || !yearSegments.length) buildYearSegments();
+    const spans = yearSegments || [];
+    for (const s of spans) {
+        if (x >= s.startX && x <= s.endX) {
             const ratio = (x - s.startX) / (s.endX - s.startX || 1);
             return s.startYear + ratio * (s.endYear - s.startYear);
         }
     }
-    if(spans.length){
-        if(x < spans[0].startX) return spans[0].startYear;
-        const last = spans[spans.length-1];
-        if(x > last.endX) return last.endYear;
+    if (spans.length) {
+        if (x < spans[0].startX) return spans[0].startYear;
+        const last = spans[spans.length - 1];
+        if (x > last.endX) return last.endYear;
     }
     return 0;
 }
 
 function formatYear(y) {
     const rounded = Math.round(y);
-    if(rounded < 0) return Math.abs(rounded) + ' BC';
-    if(rounded === 0) return '0';
+    if (rounded < 0) return Math.abs(rounded) + ' BC';
+    if (rounded === 0) return '0';
     return rounded + ' AD';
 }
 
 function updateDateBar(left) {
     // mover listas
-window.updateDateBar = updateDateBar;
+    window.updateDateBar = updateDateBar;
     const dateBar = document.querySelector('div.date-bar ul');
     const dateBarColor = document.querySelector('div.date-bar-color ul');
     if (dateBar) dateBar.style.marginLeft = (-left) + 'px';

@@ -1,7 +1,7 @@
 // Utilidades DOM modernas para reemplazar jQuery
 // Selección
-export const qs = (sel, ctx=document) => ctx.querySelector(sel);
-export const qsa = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel));
+export const qs = (sel, ctx = document) => ctx.querySelector(sel);
+export const qsa = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
 
 // Eventos (delegación opcional)
 export function on(target, type, selectorOrHandler, handler) {
@@ -31,25 +31,25 @@ export const append = (el, child) => { if (typeof child === 'string') el.insertA
 export const empty = el => { el.textContent = ''; };
 
 // Mostrar / ocultar
-export function show(el, display='block') { el.style.display = display; }
+export function show(el, display = 'block') { el.style.display = display; }
 export function hide(el) { el.style.display = 'none'; }
 export function isHidden(el) { return el.offsetParent === null || getComputedStyle(el).display === 'none'; }
 
 // Fade (usa CSS transitions dinámicas)
-function fade(el, showFlag, duration=300) {
+function fade(el, showFlag, duration = 300) {
   el.style.transition = `opacity ${duration}ms`;
   if (showFlag) {
     if (isHidden(el)) { el.style.opacity = 0; show(el); }
-    requestAnimationFrame(()=>{ el.style.opacity = 1; });
-    setTimeout(()=>{ el.style.removeProperty('transition'); el.style.removeProperty('opacity'); }, duration+20);
+    requestAnimationFrame(() => { el.style.opacity = 1; });
+    setTimeout(() => { el.style.removeProperty('transition'); el.style.removeProperty('opacity'); }, duration + 20);
   } else {
     el.style.opacity = 1;
-    requestAnimationFrame(()=>{ el.style.opacity = 0; });
-    setTimeout(()=>{ hide(el); el.style.removeProperty('transition'); el.style.removeProperty('opacity'); }, duration+20);
+    requestAnimationFrame(() => { el.style.opacity = 0; });
+    setTimeout(() => { hide(el); el.style.removeProperty('transition'); el.style.removeProperty('opacity'); }, duration + 20);
   }
 }
-export const fadeIn = (el,d=300)=>fade(el,true,d);
-export const fadeOut = (el,d=300)=>fade(el,false,d);
+export const fadeIn = (el, d = 300) => fade(el, true, d);
+export const fadeOut = (el, d = 300) => fade(el, false, d);
 
 // Serializar formulario sencilla (application/x-www-form-urlencoded)
 export function serializeForm(form) {
@@ -57,25 +57,25 @@ export function serializeForm(form) {
   for (const el of form.elements) {
     if (!el.name || el.disabled) continue;
     if ((el.type === 'checkbox' || el.type === 'radio') && !el.checked) continue;
-    params.push(encodeURIComponent(el.name)+'='+encodeURIComponent(el.value));
+    params.push(encodeURIComponent(el.name) + '=' + encodeURIComponent(el.value));
   }
   return params.join('&');
 }
 
 // Fetch JSON helper
-export async function getJSON(url, params={}) {
+export async function getJSON(url, params = {}) {
   const u = new URL(url, window.location.origin);
-  Object.entries(params).forEach(([k,v])=>u.searchParams.append(k,v));
+  Object.entries(params).forEach(([k, v]) => u.searchParams.append(k, v));
   const res = await fetch(u.toString(), { credentials: 'same-origin' });
-  if (!res.ok) throw new Error('HTTP '+res.status);
+  if (!res.ok) throw new Error('HTTP ' + res.status);
   return res.json();
 }
 
-export async function request(url, params={}) {
+export async function request(url, params = {}) {
   const u = new URL(url, window.location.origin);
-  Object.entries(params).forEach(([k,v])=>u.searchParams.append(k,v));
+  Object.entries(params).forEach(([k, v]) => u.searchParams.append(k, v));
   const res = await fetch(u.toString(), { credentials: 'same-origin' });
-  if (!res.ok) throw new Error('HTTP '+res.status);
+  if (!res.ok) throw new Error('HTTP ' + res.status);
   return res.json();
 }
 

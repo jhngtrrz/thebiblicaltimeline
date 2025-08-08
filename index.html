@@ -2218,7 +2218,6 @@
             </div>
             <div class="period-bar" id="period-bar">
                 <h5>United Kingdom</h5>
-                <!-- <div class="year-bubble" id="year-bubble"></div> -->
                 <table class="years dark">
                     <tr>
                         <td class="swash">Creation</td>
@@ -2321,9 +2320,6 @@
         var currentUser = 0;
     </script>
 
-    <!-- Libraries -->
-    <!-- Eliminadas dependencias externas: jQuery, Underscore, Backbone (migrado a JS moderno) -->
-
     <!-- Device Sniffing -->
     <script>
         var click, hover;
@@ -2340,12 +2336,9 @@
                 click = 'click';
                 hover = 'hoverable';
             }
-            document.querySelectorAll('.hover').forEach(el=> el.classList.add(hover));
+            document.querySelectorAll('.hover').forEach(el => el.classList.add(hover));
         } deviceSniff();
     </script>
-
-    <!-- Flowplayer -->
-    <!-- Eliminado Flowplayer: reemplazado por <video> nativo en video.js -->
 
     <!-- Scroller Dependencies -->
     <script src="js/scroller/Animate.js"></script>

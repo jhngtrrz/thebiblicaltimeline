@@ -18,21 +18,21 @@ import { initTimeline } from './timeline.js';
 // Ejemplo: ocultar máscara al cargar
 window.addEventListener('load', () => {
 	const mask = qs('div.mask');
-	if (mask) setTimeout(()=>{ mask.style.opacity=0; setTimeout(()=> mask.style.display='none',320); },600);
-		randomFact();
-		initMenu();
-		initEventDetailInteractions();
-		initSearch();
-		initAuth();
-		initVideo();
-				initEventHover();
-				initFooterPeriods();
-					initLanding();
-					initPeriods();
-					initTimeline();
+	if (mask) setTimeout(() => { mask.style.opacity = 0; setTimeout(() => mask.style.display = 'none', 320); }, 600);
+	randomFact();
+	initMenu();
+	initEventDetailInteractions();
+	initSearch();
+	initAuth();
+	initVideo();
+	initEventHover();
+	initFooterPeriods();
+	initLanding();
+	initPeriods();
+	initTimeline();
 });
 
-// TODO: implementar módulos: intro.js, landing.js, events.js, menu.js, search.js, auth.js, favorites.js, tooltip.js, video.js
+// TODO: implementar módulos: intro.js, favorites.js
 // Cada módulo exportará init() y se invocará aquí.
 
 console.info('App bootstrap cargado. Código legacy eliminado; usar módulos.');
