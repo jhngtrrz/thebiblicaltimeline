@@ -22,4 +22,10 @@ export function renderAll() {
   if (window.buildYearSegments) window.buildYearSegments();
 }
 
-// init eliminado: ahora el render ocurre tras clic de periodo.
+// Esperar datos si aún no están
+if (!window.events) {
+  document.addEventListener('timeline:data-ready', () => {
+    // datos listos; nada que hacer hasta interacción de usuario
+  }, { once: true });
+}
+// init original eliminado: render tras clic primer periodo.
