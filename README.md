@@ -8,6 +8,8 @@ Modernización del proyecto eliminando dependencias externas (jQuery, Backbone, 
 - Eliminado Underscore → métodos nativos (`Array.from`, `map`, `filter`, `reduce`, `Object.keys`, etc.).
 - Eliminado Flowplayer → reproducción con `<video>` nativo (`video.js`).
 - Modularización completa: separación en ES Modules (`timeline.js`, `events.js`, `periods.js`, `hover.js`, etc.).
+- Reemplazo completo de `Scroller.js` + `Animate.js` (Zynga) por módulo interno ligero `scroll-controller.js` con inercia básica.
+ - `scroll-controller.js` ahora soporta zoom (programático y pinch) y reemplaza definitivamente la antigua carpeta `js/scroller/` eliminada.
 - Refactor de hover: canvas pointer + barra de color + burbuja de año dinámica y línea vertical de precisión.
 - Nuevo flujo de render: eventos se cargan completamente al primer clic de período (`renderAll()`), permitiendo scroll fluido multi-período.
 - Barra de fechas (date-bar) sincronizada con scroll horizontal e interpolación de año precisa usando segmentos construidos desde eventos reales (`buildYearSegments()` + `interpolateYear()`).
@@ -81,6 +83,8 @@ Recomendado agregar:
 - Último período extrapola `endYear` si no hay suficientes eventos (fallback simple). Puede mejorarse añadiendo metadatos explícitos.
 - No se han optimizado imágenes (posible lazy-loading posterior).
 - Faltan polyfills para navegadores muy antiguos (no objetivo actual tras remover jQuery/Backbone).
+- El nuevo `ScrollController` no soporta todavía zoom (la landing simula zoom sólo cambiando clases de escala).
+ - Zoom implementado únicamente en la landing; el timeline principal permanece sin zoom para evitar distorsión de cálculo de años.
 
 ## Guía Rápida de Uso
 1. Servir el directorio raíz con un servidor estático.

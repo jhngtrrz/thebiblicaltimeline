@@ -1,5 +1,6 @@
 // landing.js - versión moderna sin jQuery del antiguo landing_init.js
-import { qs, qsa, on, addClass, removeClass } from './dom.js';
+import { qs, qsa, on } from './dom.js';
+import ScrollController from './scroll-controller.js';
 
 let landingScroller = null;
 let landingZoom = 1;
@@ -19,12 +20,22 @@ function initScroller() {
   const paper = qs('div.landing-paper');
   const grid = qs('div.landing-grid');
   if (!container || !stage) return;
-  landingScroller = new Scroller((left, top, zoom) => {
-    stage.style[transformProp] = `translate3d(${-left}px,0,0)`;
-    if (paper) paper.style[transformProp] = `translate3d(${-(left / 3)}px,0,0)`;
-    if (grid) grid.style[transformProp] = `translate3d(${-(left / 3)}px,0,0)`;
-  }, { zooming: true });
-  landingScroller.setOffset(0, 0);
+  landingScroller = new ScrollController((left, top, zoom) => {
+    // aplicar translate y scale combinados (transform origin por defecto top-left)
+    stage.style[transformProp] = `translate3d(${-left}px,0,0) scale(${zoom})`;
+    if (paper) paper.style[transformProp] = `translate3d(${-(left / 3)}px,0,0) scale(${zoom})`;
+    if (grid) grid.style[transformProp] = `translate3d(${-(left / 3)}px,0,0) scale(${zoom})`;
+    landingZoom = zoom;
+    // Ajustar límites según zoom sin recalcular dimensiones (evita bucle)
+    const baseW = stage._baseWidth || (stage._baseWidth = stage.clientWidth);
+    const baseH = stage._baseHeight || (stage._baseHeight = stage.clientHeight);
+    landingScroller.contentWidth = baseW * zoom;
+    landingScroller.contentHeight = baseH * zoom;
+    landingScroller.maxLeft = Math.max(0, landingScroller.contentWidth - landingScroller.viewportWidth);
+    landingScroller.maxTop = Math.max(0, landingScroller.contentHeight - landingScroller.viewportHeight);
+    landingScroller._clamp();
+    updateZoomUI(); // sólo indicadores (no reflow)
+  }, { scrollingY: false, minZoom: 0.5, maxZoom: 2 });
   reflow();
   window.addEventListener('resize', reflow);
   bindPointer(container);
@@ -42,28 +53,28 @@ function reflow() {
 
 function bindPointer(container) {
   let isDown = false;
-  const start = (point, timeStamp) => {
-    landingScroller.doTouchStart([{ pageX: point.pageX, pageY: point.pageY }], timeStamp || Date.now());
+  const start = (point) => {
+    landingScroller.doPointerStart([{ pageX: point.pageX, pageY: point.pageY }]);
     isDown = true;
   };
-  const move = (point, timeStamp) => {
+  const move = (point) => {
     if (!isDown) return;
-    landingScroller.doTouchMove([{ pageX: point.pageX, pageY: point.pageY }], timeStamp || Date.now());
+    landingScroller.doPointerMove([{ pageX: point.pageX, pageY: point.pageY }]);
   };
-  const end = (timeStamp) => {
+  const end = () => {
     if (!isDown) return;
-    landingScroller.doTouchEnd(timeStamp || Date.now());
+    landingScroller.doPointerEnd();
     isDown = false;
   };
   // Mouse
   on(container, 'mousedown', e => { if (/input|textarea|select/i.test(e.target.tagName)) return; start(e); });
   on(container, 'mousemove', e => move(e));
-  on(container, 'mouseup', e => end());
+  on(container, 'mouseup', () => end());
   // Touch
-  container.addEventListener('touchstart', e => { if (e.touches[0] && /input|textarea|select/i.test(e.touches[0].target.tagName)) return; landingScroller.doTouchStart(e.touches, e.timeStamp); e.preventDefault(); }, { passive: false });
-  container.addEventListener('touchmove', e => landingScroller.doTouchMove(e.touches, e.timeStamp, e.scale), { passive: true });
-  container.addEventListener('touchend', e => landingScroller.doTouchEnd(e.timeStamp));
-  container.addEventListener('touchcancel', e => landingScroller.doTouchEnd(e.timeStamp));
+  container.addEventListener('touchstart', e => { if (e.touches[0] && /input|textarea|select/i.test(e.touches[0].target.tagName)) return; landingScroller.doPointerStart(e.touches); e.preventDefault(); }, { passive: false });
+  container.addEventListener('touchmove', e => landingScroller.doPointerMove(e.touches), { passive: true });
+  container.addEventListener('touchend', () => landingScroller.doPointerEnd());
+  container.addEventListener('touchcancel', () => landingScroller.doPointerEnd());
 }
 
 function bindUI() {
@@ -91,15 +102,18 @@ function bindUI() {
   updateZoomUI();
 }
 
-function zoomIn() { landingZoom = Math.min(2, landingZoom + 1); updateZoomUI(); }
-function zoomOut() { landingZoom = Math.max(0, landingZoom - 1); updateZoomUI(); }
+function zoomIn() { landingScroller.zoomBy(1.25, { animate: true }); }
+function zoomOut() { landingScroller.zoomBy(1 / 1.25, { animate: true }); }
 
 function updateZoomUI() {
   const stage = qs('div.landing-stage');
-  if (stage) { ['zoom-1', 'zoom-2', 'zoom-3'].forEach(c => removeClass(stage, c)); addClass(stage, 'zoom-' + (landingZoom + 1)); }
+  if (stage) { /* clases legacy no necesarias con scale directo */ }
   const indicators = qsa('ul.indicator li');
-  indicators.forEach((li, i) => { if (i === landingZoom) addClass(li, 'active'); else removeClass(li, 'active'); });
-  reflow();
+  indicators.forEach((li) => { li.classList.remove('active'); });
+  // Activar el indicador más cercano según rangos arbitrarios
+  if (landingZoom < 0.8 && indicators[0]) indicators[0].classList.add('active');
+  else if (landingZoom < 1.3 && indicators[1]) indicators[1].classList.add('active');
+  else if (indicators[2]) indicators[2].classList.add('active');
 }
 
 function toggleFullscreen() {

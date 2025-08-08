@@ -1,5 +1,6 @@
 // timeline.js - inicializa scroller principal para la vista timeline
 import { qs } from './dom.js';
+import ScrollController from './scroll-controller.js';
 
 export function initTimeline() {
     if (window.scroller) return; // evitar doble
@@ -7,12 +8,12 @@ export function initTimeline() {
     if (!eventsContainer) { console.warn('No .timeline .events encontrado'); return; }
     // Crear scroller horizontal simple
     const stage = eventsContainer; // asumimos que su ancho ya está definido vía CSS/inline
-    window.scroller = new Scroller((left, top, zoom) => {
+    window.scroller = new ScrollController((left, top) => {
         stage.style.transform = `translate3d(${-left}px,${-top}px,0)`;
         window.currentTop = top;
         updateIndicator(left, top);
         updateDateBar(left);
-    }, { zooming: false, animating: true, bouncing: true, scrollingY: true, scrollingX: true });
+    }, { animating: true, bouncing: true, scrollingY: true, scrollingX: true });
     // Dimensiones: usar scrollWidth del contenedor
     const reflow = () => {
         const contentW = stage.scrollWidth || stage.clientWidth || 5000;
@@ -26,17 +27,17 @@ export function initTimeline() {
     let isDown = false;
     const container = qs('div.timeline');
     if (container) {
-        container.addEventListener('mousedown', e => { if (e.button !== 0) return; isDown = true; window.scroller.doTouchStart([{ pageX: e.pageX, pageY: e.pageY }], e.timeStamp); e.preventDefault(); });
-        container.addEventListener('mousemove', e => { if (!isDown) return; window.scroller.doTouchMove([{ pageX: e.pageX, pageY: e.pageY }], e.timeStamp); });
-        container.addEventListener('mouseup', e => { if (!isDown) return; isDown = false; window.scroller.doTouchEnd(e.timeStamp); });
-        container.addEventListener('mouseleave', e => { if (isDown) { isDown = false; window.scroller.doTouchEnd(e.timeStamp); } });
+        container.addEventListener('mousedown', e => { if (e.button !== 0) return; isDown = true; window.scroller.doPointerStart([{ pageX: e.pageX, pageY: e.pageY }]); e.preventDefault(); });
+        container.addEventListener('mousemove', e => { if (!isDown) return; window.scroller.doPointerMove([{ pageX: e.pageX, pageY: e.pageY }]); });
+        container.addEventListener('mouseup', e => { if (!isDown) return; isDown = false; window.scroller.doPointerEnd(); });
+        container.addEventListener('mouseleave', e => { if (isDown) { isDown = false; window.scroller.doPointerEnd(); } });
         // Touch
-        container.addEventListener('touchstart', e => { window.scroller.doTouchStart(e.touches, e.timeStamp); }, { passive: true });
-        container.addEventListener('touchmove', e => { window.scroller.doTouchMove(e.touches, e.timeStamp); }, { passive: true });
-        container.addEventListener('touchend', e => { window.scroller.doTouchEnd(e.timeStamp); });
-        container.addEventListener('touchcancel', e => { window.scroller.doTouchEnd(e.timeStamp); });
+        container.addEventListener('touchstart', e => { window.scroller.doPointerStart(e.touches); }, { passive: true });
+        container.addEventListener('touchmove', e => { window.scroller.doPointerMove(e.touches); }, { passive: true });
+        container.addEventListener('touchend', e => { window.scroller.doPointerEnd(); });
+        container.addEventListener('touchcancel', e => { window.scroller.doPointerEnd(); });
         // Wheel horizontal
-        container.addEventListener('wheel', e => { if (!window.scroller) return; const delta = e.deltaY || e.deltaX; const left = (window.scroller.__scrollLeft || 0) + delta; window.scroller.scrollTo(left, 0, false); e.preventDefault(); }, { passive: false });
+        container.addEventListener('wheel', e => { if (!window.scroller) return; const delta = e.deltaY || e.deltaX; const left = (window.scroller.left || 0) + delta; window.scroller.scrollTo(left, window.scroller.top, false); e.preventDefault(); }, { passive: false });
     }
 }
 
