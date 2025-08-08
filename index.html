@@ -3,7 +3,6 @@
 
 <head>
     <title>The Biblical Timeline</title>
-    <base href='//timeline.biblehistory.com/'>
     <meta charset="utf-8">
     <meta name="description" content="">
     <link rel="icon" type="image/png" href="css/img/favicon.png" />
@@ -847,7 +846,7 @@
     <div class="video-modal">
         <div class="video-wrap">
             <span class="close"></span>
-            <div class="video-player flowplayer" data-key="$495596516396314">
+            <div class="video-player">
                 <video>
                     <source src="media/videos/empty.mp4" type="video/mp4">
                 </video>
@@ -858,7 +857,7 @@
     </div>
 
     <!-- Timeline 												-->
-    <div class="timeline">
+    <div class="timeline" style="display:none;">
         <!-- Sidebar -->
         <div class="sidebar">
             <a href="http://www.bibleuniverse.com/study-tools/storacles/english.aspx" target="_blank"
@@ -2323,9 +2322,7 @@
     </script>
 
     <!-- Libraries -->
-    <script src="js/libs/jquery.js"></script>
-    <script src="js/libs/underscore.min.js"></script>
-    <script src="js/libs/backbone.min.js"></script>
+    <!-- Eliminadas dependencias externas: jQuery, Underscore, Backbone (migrado a JS moderno) -->
 
     <!-- Device Sniffing -->
     <script>
@@ -2343,23 +2340,19 @@
                 click = 'click';
                 hover = 'hoverable';
             }
-            $('.hover').addClass(hover);
+            document.querySelectorAll('.hover').forEach(el=> el.classList.add(hover));
         } deviceSniff();
     </script>
 
     <!-- Flowplayer -->
-    <script src="js/flowplayer/flowplayer.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="js/flowplayer/skin/minimalist.css">
+    <!-- Eliminado Flowplayer: reemplazado por <video> nativo en video.js -->
 
     <!-- Scroller Dependencies -->
     <script src="js/scroller/Animate.js"></script>
     <script src="js/scroller/Scroller.js"></script>
 
     <!-- App -->
-    <script src="js/app.js"></script>
-    <script src="js/router.js"></script>
-    <script src="js/scroller_init.js"></script>
-    <script src="js/landing_init.js"></script>
+    <script type="module" src="js/app.js"></script>
 
 </body>
 

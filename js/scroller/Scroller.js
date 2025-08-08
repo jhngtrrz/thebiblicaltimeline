@@ -1048,9 +1048,8 @@ var Scroller;
 			var self = this;
 			
 			
-			// Do things when the scrolling "seems" to stop			
-			var speed = self.__decelerationVelocityX;
-			slowing(speed);
+			// Hook eliminado: slowing(speed) referenciaba función inexistente (legacy). Se omite para evitar errores.
+			// var speed = self.__decelerationVelocityX; // disponible si se necesita un callback externo.
 
 
 
